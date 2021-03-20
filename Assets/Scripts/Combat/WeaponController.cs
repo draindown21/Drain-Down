@@ -64,7 +64,6 @@ namespace Combat
                 while (true)
                 {
                     GameObject bulletInstance = Instantiate(currentActiveWeapon.Bullet, transform.position, transform.rotation);
-                    bulletInstance.transform.parent = currentActiveWeapon.BulletHolder;
                     bulletInstance.transform.position = currentActiveWeapon.BulletHolder.position;
                     bulletInstance.SetActive(true);
 
