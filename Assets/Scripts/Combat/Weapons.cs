@@ -8,16 +8,26 @@ namespace Combat
     public class Weapons : MonoBehaviour
     {
         [SerializeField] int weaponID;
-        [SerializeField] int totalBullets;
+        [SerializeField] GameObject bullet;
+        [SerializeField] int mazineSize;
+        [SerializeField] int range;
+        [Range(0, 2)] [SerializeField] float projectionRate;
+        [SerializeField] int damage;
+        [SerializeField] Transform bulletHolder; 
 
+        public int WeaponID { get { return weaponID; } }
 
-        public int WeaponID { get; }
+        public GameObject Bullet { get { return bullet; } }
 
-        public int Bullets
-        {
-            get { return totalBullets; }
-            set { totalBullets = value; }
-        }
+        public int MazineSize { get { return mazineSize; } }
+
+        public int Range { get { return range; } }
+
+        public float ProjectionRate { get { return projectionRate; } }
+
+        public int Damage { get { return damage; } }
+
+        public Transform BulletHolder { get { return bulletHolder; } }
 
     }
 }

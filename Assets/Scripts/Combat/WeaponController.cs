@@ -7,18 +7,34 @@ namespace Combat
 {
     public class WeaponController : MonoBehaviour
     {
-        [SerializeField] int currentWeaponID;
+        [SerializeField] int currentActiveWeaponID;
+        Weapons currentActiveWeapon;
 
-        List<GameObject> weaponsList = new List<GameObject>();
+        List<Weapons> weaponsList = new List<Weapons>();
+
+        [SerializeField] AttackController attackController;
+
+        private void OnEnable()
+        {
+            attackController.AttackStarted += Fire;
+            attackController.AttackEnded += StopFire;
+        }
 
         private void Start()
         {
+            GetAllAvaliableWeapons();
+            currentActiveWeapon = weaponsList[currentActiveWeaponID];
+        }
+
+        private void GetAllAvaliableWeapons()
+        {
             int totalWeapons = transform.childCount;
 
-            for(int i = 0; i < totalWeapons; i++)
+            for (int i = 0; i < totalWeapons; i++)
             {
-                weaponsList.Add(transform.GetChild(i).gameObject);
+                weaponsList.Add(transform.GetChild(i).GetComponent<Weapons>());
             }
+
         }
 
         public void ChangeWeapon()
@@ -29,14 +45,37 @@ namespace Combat
 
         private void ActivateWeapon()
         {
-            int nextWeaponID = currentWeaponID + 1;
+            int nextWeaponID = currentActiveWeaponID + 1;
 
             if(nextWeaponID == weaponsList.Count) { nextWeaponID = 0; }
 
-            weaponsList[currentWeaponID].SetActive(false);
-            weaponsList[nextWeaponID].SetActive(true);
+            currentActiveWeapon.gameObject.SetActive(false);
+            weaponsList[nextWeaponID].gameObject.SetActive(true);
 
-            currentWeaponID = nextWeaponID;
+            currentActiveWeaponID = nextWeaponID;
+            currentActiveWeapon = weaponsList[currentActiveWeaponID];
+        }
+
+        private void Fire()
+        {
+            StartCoroutine(enumerator());
+            IEnumerator enumerator()
+            {
+                while (true)
+                {
+                    GameObject bulletInstance = Instantiate(currentActiveWeapon.Bullet, transform.position, transform.rotation);
+                    bulletInstance.transform.parent = currentActiveWeapon.BulletHolder;
+                    bulletInstance.transform.position = currentActiveWeapon.BulletHolder.position;
+                    bulletInstance.SetActive(true);
+
+                    yield return new WaitForSeconds(currentActiveWeapon.ProjectionRate);
+                }
+            }
+        }
+
+        private void StopFire()
+        {
+            StopAllCoroutines();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Movement
 {
 
     [System.Serializable]
-    public enum ButtonLabel { LEFT_BUTTON, RIGHT_BUTTON }
+    public enum Label { NONE, LEFT_BUTTON, RIGHT_BUTTON }
 
 
     public class Mover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
@@ -16,21 +16,21 @@ namespace Movement
 
         [SerializeField] float speed = 5f;
 
-        [SerializeField] ButtonLabel butttonLabel;
+        [SerializeField] Label butttonLabel;
 
         bool buttonDown = false;
 
         public void OnPointerDown(PointerEventData eventData)
         {
             buttonDown = true;
-            ButtonLabel label = eventData.selectedObject.gameObject.transform.GetComponent<Mover>().butttonLabel;
+            Label label = eventData.selectedObject.gameObject.transform.GetComponent<Mover>().butttonLabel;
 
-            if (label.Equals(ButtonLabel.LEFT_BUTTON))
+            if (label.Equals(Label.LEFT_BUTTON))
             {
                 MoveLeft();
             }
 
-            else if (label.Equals(ButtonLabel.RIGHT_BUTTON))
+            else if (label.Equals(Label.RIGHT_BUTTON))
             {
                 MoveRight();
             }
