@@ -5,66 +5,61 @@ using UnityEngine.EventSystems;
 
 namespace Movement
 {
-
-    [System.Serializable]
-    public enum Label { NONE, LEFT_BUTTON, RIGHT_BUTTON }
-
-
-    public class Mover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class Mover : MonoBehaviour
     {
-        [SerializeField] GameObject targetObject;
+        Rigidbody2D myRigidbody;
 
         [SerializeField] float speed = 5f;
+        [SerializeField] float jumpForce = 600f;
 
-        [SerializeField] Label butttonLabel;
+        bool isButtonDown = false;
 
-        bool buttonDown = false;
-
-        public void OnPointerDown(PointerEventData eventData)
+        private void Start()
         {
-            buttonDown = true;
-            Label label = eventData.selectedObject.gameObject.transform.GetComponent<Mover>().butttonLabel;
-
-            if (label.Equals(Label.LEFT_BUTTON))
-            {
-                MoveLeft();
-            }
-
-            else if (label.Equals(Label.RIGHT_BUTTON))
-            {
-                MoveRight();
-            }
+            myRigidbody = GetComponent<Rigidbody2D>();
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public void MoveLeft(bool isButtonDown)
         {
-            buttonDown = false;
-        }
+            if (!isButtonDown) 
+            { 
+                StopAllCoroutines(); 
+                return; 
+            }
 
-        public void MoveLeft()
-        {
             StartCoroutine(enumerator());
             IEnumerator enumerator()
             {
-                while (buttonDown)
+                while (isButtonDown)
                 {
-                    targetObject.transform.position = new Vector2(targetObject.transform.position.x - speed * Time.deltaTime, targetObject.transform.position.y);
+                    transform.position = new Vector2(transform.position.x - speed * Time.deltaTime, transform.position.y);
                     yield return null;
                 }
             }
         }
 
-        public void MoveRight()
+        public void MoveRight(bool isButtonDown)
         {
+            if (!isButtonDown)
+            {
+                StopAllCoroutines();
+                return;
+            }
+
             StartCoroutine(enumerator());
             IEnumerator enumerator()
             {
-                while (buttonDown)
+                while (isButtonDown)
                 {
-                    targetObject.transform.position = new Vector2(targetObject.transform.position.x + speed * Time.deltaTime, targetObject.transform.position.y);
+                    transform.position = new Vector2(transform.position.x + speed * Time.deltaTime, transform.position.y);
                     yield return null;
                 }
             }
+        }
+
+        public void Jump()
+        {
+            myRigidbody.AddForce(Vector2.up * jumpForce * Time.deltaTime, ForceMode2D.Impulse);
         }
     }
 }
